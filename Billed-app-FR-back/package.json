@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "test": "NODE_ENV=test sequelize-cli db:migrate && jest test -i tests/user.test.js --watch",
-    "run:dev": "NODE_ENV=development sequelize-cli db:migrate && node server.js",
+    "run:dev": "cross-env NODE_ENV=development sequelize-cli db:migrate && node server.js",
     "lint": "eslint ./"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.3",
