@@ -17,7 +17,23 @@ export default class NewBill {
     this.billId = null;
     new Logout({ document, localStorage, onNavigate });
   }
-  handleChangeFile = (e) => {
+
+  fileValidation = (file) => {
+    //TODO 3 - On verifie le type de fichier à uploader
+    const fileTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (!fileTypes.includes(file.type)) {
+      this.document
+        .querySelector(`input[data-testid="file"]`)
+        .classList.add("is-invalid");
+      return false;
+    }
+    this.document
+      .querySelector(`input[data-testid="file"]`)
+      .classList.remove("is-invalid");
+    return true;
+  };
+
+  handleChangeFile = async (e) => {
     e.preventDefault();
     const file = this.document.querySelector(`input[data-testid="file"]`)
       .files[0];
@@ -28,28 +44,25 @@ export default class NewBill {
     formData.append("file", file);
     formData.append("email", email);
 
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true,
-        },
-      })
-      .then(({ fileUrl, key }) => {
-        console.log(fileUrl);
-        this.billId = key;
-        this.fileUrl = fileUrl;
-        this.fileName = fileName;
-      })
-      .catch((error) => console.error(error));
+    this.fileValidation(file) &&
+      this.store //TODO 3 / si type de fichier incorrect, on ne l'envoie pas vers le store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true,
+          },
+        })
+        .then(({ fileUrl, key }) => {
+          this.billId = key;
+          this.fileUrl = fileUrl;
+          this.fileName = fileName;
+        })
+        .catch((error) => console.error(error));
   };
+
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log(
-      'e.target.querySelector(`input[data-testid="datepicker"]`).value',
-      e.target.querySelector(`input[data-testid="datepicker"]`).value
-    );
     const email = JSON.parse(localStorage.getItem("user")).email;
     const bill = {
       email,
@@ -69,6 +82,9 @@ export default class NewBill {
       fileName: this.fileName,
       status: "pending",
     };
+
+    if (!this.fileName) return;
+    //TODO 3 - si pas de fichier selectionné, submit impossible
     this.updateBill(bill);
     this.onNavigate(ROUTES_PATH["Bills"]);
   };
