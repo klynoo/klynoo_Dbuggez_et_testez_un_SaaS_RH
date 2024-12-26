@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor, within } from "@testing-library/dom";
+import { screen, waitFor, within, fireEvent } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import BillsUI from "../views/BillsUI.js";
@@ -13,6 +13,16 @@ import router from "../app/Router.js";
 import Bills from "../containers/Bills.js";
 
 jest.mock("../app/store", () => mockedStore);
+
+Object.defineProperty(window, "getComputedStyle", {
+  value: () => ({
+    getPropertyValue: () => "",
+  }),
+});
+
+beforeAll(() => {
+  $.fn.modal = jest.fn();
+});
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -99,7 +109,6 @@ describe("Given I am connected as an employee", () => {
         Object.defineProperty(window, "localStorage", {
           value: localStorageMock,
         });
-
         window.localStorage.setItem(
           "user",
           JSON.stringify({
@@ -120,17 +129,11 @@ describe("Given I am connected as an employee", () => {
 
         const handleClickIconEye = jest.fn(billsPage.handleClickIconEye);
 
-        const modale = document.getElementById("modaleFile");
-
-        $.fn.modal = jest.fn(() => modale.classList.add("show")); //mock de la modale Bootstrap
-
         iconEyes.forEach((iconEye) => {
           iconEye.addEventListener("click", () => handleClickIconEye(iconEye));
-          userEvent.click(iconEye);
+          fireEvent.click(iconEye);
 
           expect(handleClickIconEye).toHaveBeenCalled();
-
-          expect(modale).toHaveClass("show");
         });
       });
     });

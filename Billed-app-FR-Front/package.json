@@ -1,7 +1,7 @@
 {
   "scripts": {
     "test": "jest --coverage --noStackTrace --silent",
-    "test:one": "jest --noStackTrace --watch src/__tests__/Login.js"
+    "test:one": "jest --noStackTrace --watch src/__tests__/Bills.js"
   },
   "jest": {
     "verbose": false,
@@ -21,7 +21,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "global": "^4.4.0",
-    "jquery": "^3.5.1",
+    "jquery": "^3.7.1",
     "path": "^0.12.7"
   },
   "devDependencies": {
